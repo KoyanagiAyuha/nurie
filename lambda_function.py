@@ -27,7 +27,8 @@ def nurie_filter(img):
     dilated = cv2.dilate(img, neiborhood24, iterations=1)
     diff = cv2.absdiff(dilated, img)
     contour = 255 - diff
-    return contour
+    img_gray = cv2.cvtColor(contour, cv2.COLOR_BGR2GRAY)
+    return img_gray
 
 def lambda_handler(event, context):
     # requestbodeyの中のjsonはeventに辞書型に変化されて保存されている
