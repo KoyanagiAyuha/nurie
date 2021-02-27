@@ -4,6 +4,7 @@ import json
 import numpy as np
 import boto3
 import uuid
+import io
 
 def convert_b64_string_to_bynary(s):
     """base64をデコードする"""
@@ -67,10 +68,10 @@ def lambda_handler(event, context):
     
     anime = nurie_filter(cvimg)
     
-    
+    if save_flag == "True":
+        post_s3(io.BytesIO(anime), putname)
 
     body = cv2_to_base64(anime)
-    if save_flag == "True":
-        post_s3(body, putname)
+    
     # とりあえずOKを返す。
     return body
