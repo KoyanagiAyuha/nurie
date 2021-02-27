@@ -61,9 +61,9 @@ def lambda_handler(event, context):
     cvimg = base64_to_cv2(base_64ed_image)
     
     if check_r18(cvimg):
-        putname = "Moderation/" + uuid.uuid4() + ".jpg"
+        putname = "Moderation/" + str(uuid.uuid4()) + ".jpg"
     else:
-        putname = "NoModeration/" + uuid.uuid4() + ".jpg"
+        putname = "NoModeration/" + str(uuid.uuid4()) + ".jpg"
     
     anime = nurie_filter(cvimg)
     
