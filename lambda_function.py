@@ -34,8 +34,8 @@ def nurie_filter(img):
 
 def post_s3(img, putname):
     s3 = boto3.client('s3')
-    s3.upload_fileobj(
-        Fileobj = img,
+    s3.upload_file(
+        Filename = img,
         Bucket = 'nurie',
         Key = putname,
         ExtraArgs={"ContentType": "image/jpeg", "ACL":"public-read"}
@@ -67,9 +67,11 @@ def lambda_handler(event, context):
         putname = "NoModeration/" + str(uuid.uuid4()) + ".jpg"
     
     anime = nurie_filter(cvimg)
+    tmpname = '/tmp/tmp.jpg'
+    cv2.imwirte(tmpname, anime)
     
     if save_flag == "True":
-        post_s3(io.BytesIO(anime), putname)
+        post_s3(tmpname, putname)
 
     body = cv2_to_base64(anime)
     
