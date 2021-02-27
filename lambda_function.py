@@ -45,7 +45,7 @@ def post_s3(img, putname):
 def check_r18(img):
     client=boto3.client('rekognition')
     result, buf = cv2.imencode('.jpg', img)
-    response = client.detect_moderation_labels(Image={'Bytes':buf.tobytes()}, Attributes=['ALL'])
+    response = client.detect_moderation_labels(Image={'Bytes':buf.tobytes()})
     if len(response['ModerationLabels']) == 0:
         return True
     return False
