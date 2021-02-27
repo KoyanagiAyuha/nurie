@@ -37,7 +37,7 @@ def post_s3(img, putname):
         Fileobj = img,
         Bucket = 'nurie',
         Key = putname,
-        ExtraArgs={"ContentType": "image/jpeg", 'ACL':'public-read'}
+        ExtraArgs={"ContentType": "image/jpeg", "ACL":"public-read"}
     )
 
 
