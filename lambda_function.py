@@ -35,7 +35,7 @@ def post_s3(img, putname):
     s3 = boto3.client('s3')
     s3.upload_fileobj(
         Fileobj = img,
-        Bucket = 'nurie'
+        Bucket = 'nurie',
         Key = putname,
         ExtraArgs={"ContentType": "image/jpeg", 'ACL':'public-read'}
     )
