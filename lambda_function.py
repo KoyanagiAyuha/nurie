@@ -68,7 +68,7 @@ def lambda_handler(event, context):
     
     anime = nurie_filter(cvimg)
     tmpname = '/tmp/tmp.jpg'
-    cv2.imwirte(tmpname, anime)
+    cv2.imwrite(tmpname, anime)
     
     if save_flag == "True":
         post_s3(tmpname, putname)
