@@ -2,7 +2,8 @@ import cv2
 import base64
 import json
 import numpy as np
-
+import boto3
+import uuid
 
 def convert_b64_string_to_bynary(s):
     """base64をデコードする"""
@@ -30,15 +31,45 @@ def nurie_filter(img):
     img_gray = cv2.cvtColor(contour, cv2.COLOR_BGR2GRAY)
     return img_gray
 
+def post_s3(img, putname):
+    s3 = boto3.client('s3')
+    s3.upload_fileobj(
+        Fileobj = img,
+        Bucket = 'nurie'
+        Key = putname,
+        ExtraArgs={"ContentType": "image/jpeg", 'ACL':'public-read'}
+    )
+
+
+
+def check_r18(img):
+    client=boto3.client('rekognition')
+    result, buf = cv2.imencode('.jpg', img)
+    response = client.detect_moderation_labels(Image={'Bytes':buf.tobytes()}, Attributes=['ALL'])
+    if len(response['ModerationLabels']) == 0:
+        return True
+    return False
+
 def lambda_handler(event, context):
     # requestbodeyの中のjsonはeventに辞書型に変化されて保存されている
     # なので、eventの中には {"mypng": "base64でエンコードされた文字列"}が入力される想定。
     base_64ed_image = event['mypng']
+    save_flag = event['saveflag']
+
+    
     # バケット作成を作成してbynary変換して保存する。
     cvimg = base64_to_cv2(base_64ed_image)
-
+    
+    if check_r18(cvimg):
+        putname = "Moderation/" + uuid.uuid4() + ".jpg"
+    else:
+        putname = "NoModeration/" + uuid.uuid4() + ".jpg"
+    
     anime = nurie_filter(cvimg)
     
+    if save_flag == "True":
+        post_s3(anime, putname)
+
     body = cv2_to_base64(anime)
     # とりあえずOKを返す。
     return body
