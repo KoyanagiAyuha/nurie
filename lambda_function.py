@@ -67,9 +67,10 @@ def lambda_handler(event, context):
     
     anime = nurie_filter(cvimg)
     
-    if save_flag == "True":
-        post_s3(anime, putname)
+    
 
     body = cv2_to_base64(anime)
+    if save_flag == "True":
+        post_s3(body, putname)
     # とりあえずOKを返す。
     return body
